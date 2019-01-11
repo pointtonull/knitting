@@ -1,3 +1,6 @@
+# Vim
+.*.sw?
+
 # Third party benchmarks
 thirdparty
 
