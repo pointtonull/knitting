@@ -11,7 +11,7 @@ clean:
 
 deps: .deps
 .deps: $(REQUIREMENTS) requirements.txt
-	pip install -qr requirements.txt
+	pip install -qur requirements.txt
 	touch .deps
 
 
