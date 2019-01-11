@@ -8,7 +8,7 @@ touch of machine learning to achive the best approximation possible.
 A good portrait is one the viewer easily identify with the subject.
 That's why I decided to base the fitness functions on human eye/brain features.
 
-- Knitter function must address `moire` issues.
+- Render function must address `moire` issues.
 - Unfocus filter must be applied before comparation based on know dimensions of
   the frame and distance of the observer
 - Linear transformations should have limited effect on fitness
@@ -18,12 +18,22 @@ That's why I decided to base the fitness functions on human eye/brain features.
 
 ## Knitter function
 
-This is the procedure that creates the image, given target image and weights.
+This is the procedure that creates the image, given target image.
 
 Features:
 
-- returns a image of similar dimensions than the given one
+- returns a list of steps for knitting
+
+## Render function
+
+Creates the image given the knitting steps
+
+## Fast Render Function
+
+Must create a knitted image using the given weights
+
 - avoids `moire patterns` formation
+
 
 # TODO:
 
