@@ -36,10 +36,3 @@ unit test: deps
 coverage: deps
 	cd $(SRC);\
 	$(PYTHON) -m pytest -v --doctest-modules ./ --cov=./ --cov-report=term-missing ../tests
-
-
-.PHONY: debug
-debug: deps
-	# TODO: reimplement using pytests
-	cd $(SRC);\
-	$(IPYTHON) --pdb -m main
