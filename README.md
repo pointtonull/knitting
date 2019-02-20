@@ -27,6 +27,8 @@ That's why I decided to base the fitness functions on human eye/brain features.
     - adjust brightness and contrast before comparation
     - adjusted values for brightness and contrast are used as part of fitness
       output
+- Some non-linear adjustdment may give the fitting some flexibility, basic
+  tone-mapping to allow better local contrast could come handy
 
 
 ## Knitter function
