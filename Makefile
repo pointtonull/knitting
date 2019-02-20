@@ -11,13 +11,12 @@ clean:
 
 deps: .deps
 .deps: $(REQUIREMENTS) requirements.txt
-	pip install -qur requirements.txt
+	pip install -qUr requirements.txt
 	touch .deps
 
 
 ipython: deps
-	cd $(SRC);\
-	$(PYTHON) -m IPython
+	PYTHONPATH=$(SRC) $(PYTHON) -m IPython
 
 
 .PHONY: tdd
