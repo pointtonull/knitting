@@ -42,6 +42,8 @@ Features:
 
 Creates the image given the knitting steps
 
+- avoids `moire patterns` formation
+
 
 ## Fast Render Function
 
@@ -57,3 +59,4 @@ Must create a knitted image using the given weights
 - Create variable-deep thread finder
 - Create Newton fast approximation for smart cropping
 - Use Newton weights to prioritize thread finder
+- Implement pre-processing options (sobel?)
