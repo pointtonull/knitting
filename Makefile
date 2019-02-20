@@ -1,5 +1,6 @@
 SRC = src
-PYTHON = python
+PYTHON = python3
+REQUIREMENTS = requirements.txt
 
 
 .PHONY: clean
@@ -10,13 +11,10 @@ clean:
 
 
 deps: .deps
-.deps: $(REQUIREMENTS) requirements.txt
-	pip install -qUr requirements.txt
+
+.deps: $(REQUIREMENTS)
+	pip install -qUr $(REQUIREMENTS)
 	touch .deps
-
-
-ipython: deps
-	PYTHONPATH=$(SRC) $(PYTHON) -m IPython
 
 
 .PHONY: tdd
@@ -35,3 +33,9 @@ unit test: deps
 coverage: deps
 	cd $(SRC);\
 	$(PYTHON) -m pytest -v --doctest-modules ./ --cov=./ --cov-report=term-missing ../tests
+
+.PHONY: ipython
+ipython: deps
+	cd $(SRC);\
+	DUMMY=True PYTHONPATH=deps $(PYTHON) terminal.py
+
