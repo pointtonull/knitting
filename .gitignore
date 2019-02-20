@@ -1,3 +1,12 @@
+# This project artefacts
+.deps
+
+# Vim
+.*.sw?
+
+# Third party benchmarks
+thirdparty
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -14,7 +23,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
