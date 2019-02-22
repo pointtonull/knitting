@@ -81,19 +81,20 @@ def phase_denoise(phase, size=1, filter_func=ndimage.filters.median_filter):
     return denoised
 
 
-def draw_line(r0, c0, r1, c1, image, opacity=.6):
+def draw_line(canvas, start, end, value=0, opacity=.6):
     """
     In place draws a line with anti-aliasing and given opacity.
 
-    r0, c0: Initial row and column.
-    r1, c1: Final row and column.
-    image: array where to apply the line in-place.
+    canvas: array where to apply the line in-place.
+    start: Initial row and column.
+    end: Final row and column.
+    value: color to paint.
     opacity: how much to affect the image with the new values.
     """
-    rr, cc, alpha = line_aa(r0, c0, r1, c1)
-    opaque = image[rr, cc] * opacity * alpha
-    transparent = image[rr, cc] * (1 - alpha)
-    image[rr, cc] = opaque + transparent
+    rr, cc, alpha = line_aa(*start, *end)
+    original = canvas[rr, cc]
+    painted = value * alpha + original * (1 - alpha)
+    canvas[rr, cc] = painted * opacity + original * (1 - opacity)
 
 
 def auto_canny(array, average=None, gaussian_sigma=1, strongness=2.5,
