@@ -12,15 +12,16 @@ from numpy import sin, cos, exp, log, arctan2
 from scipy import misc, ndimage
 from scipy.misc import imresize
 from scipy.ndimage import geometric_transform
+from skimage.draw import line_aa
 from skimage.feature import canny
 
 from .minimize import generic_minimizer
 from . import cache
 
 VERBOSE = 0
-tau = np.pi * 2 # twice as sexy as pi
+tau = np.pi * 2  # twice as sexy as pi
 
-#TODO:
+# TODO:
 #  * implement:
 #    - imshow   as in interface.py
 #    - imsave
@@ -112,7 +113,6 @@ def auto_canny(array, average=None, gaussian_sigma=1, strongness=2.5,
     return canny(array, gaussian_sigma, hard_threshold, soft_threshold)
 
 
-
 @cache.hybrid
 def get_subtract_paramns(left, right):
     """
@@ -159,11 +159,11 @@ def limit_size(image, limit, avoidodds=True):
     relsize = (image.size / limit) ** -.5
     if relsize <= 1:
         new_shape = [int(round(res * relsize))
-            for res in image.shape]
+                     for res in image.shape]
 
         if avoidodds:
             new_shape = tuple([int(res + res % 2)
-                for res in new_shape])
+                               for res in new_shape])
 
         image = imresize(image, new_shape, 'bicubic')
         image = np.float32(image)
@@ -210,7 +210,7 @@ def get_logpolar(array, interpolation=0, reverse=False):
     trans = logpol2cart if reverse else cart2logpol
 
     logpolar = geometric_transform(array, trans, array.shape,
-        order=interpolation)
+                                   order=interpolation)
 
     return logpolar
 
@@ -255,7 +255,7 @@ def get_polar(array, interpolation=0, reverse=False):
     trans = pol2cart if reverse else cart2pol
 
     polar = geometric_transform(array, trans, array.shape,
-        order=interpolation)
+                                order=interpolation)
 
     return polar
 
@@ -268,15 +268,15 @@ def open_raw(filename):
     }
 
     bits = open(filename, "rb").read()
-    length = len(bits)
+    lenght = len(bits)
 
-    if length in known_resolutions:
-        rows, cols, method = known_resolutions[length]
+    if lenght in known_resolutions:
+        rows, cols, method = known_resolutions[lenght]
         array = np.array([ord(char) for char in bits])
         array = array.reshape((rows, cols))
 
         if method == "bayer":
-            #TODO: implement Malvar-He-Cutler Bayer demosaicing
+            # TODO: implement Malvar-He-Cutler Bayer demosaicing
             print("Identified %s as bayer raw." % filename)
             array0 = array[0::2, 0::2]
             array1 = array[0::2, 1::2]
@@ -290,8 +290,7 @@ def open_raw(filename):
         return array
 
     else:
-        raise IOError("unknown resolution on raw file %s (%d pixels)" %
-            (filename, length))
+        raise IOError(f"unknown resolution on raw file {filename} ({lenght} pixels)")
 
 
 def imread(filename, flatten=True):
@@ -302,7 +301,7 @@ def imread(filename, flatten=True):
             array = misc.imread(filename, flatten)
         except IOError:
             array = open_gdal(filename)
-            array = array[:3, :, :] # alpha shift
+            array = array[:3, :, :]                       # alpha shift
             if flatten:
                 array = array.mean(0)
     return array
@@ -324,13 +323,12 @@ def evenshape(array, shrink=False):
     if not shrink:
         newshape = [dim + 1 - dim % 2 for dim in array.shape]
         newarray = np.zeros(newshape)
-        newarray[:array.shape[0],:array.shape[1]] = array
+        newarray[:array.shape[0], :array.shape[1]] = array
     else:
         newshape = [dim - 1 + dim % 2 for dim in array.shape]
         newarray = array[:newshape[0], :newshape[1]]
 
     return newarray
-
 
 
 def imwrite(array, filename):
@@ -384,7 +382,7 @@ def get_shift_to_center_of_mass(array, mode="wrap"):
     """
     if array.ndim > 1:
         shift = [get_shift_to_center_of_mass(array.sum(dim))
-            for dim in range(array.ndim)][::-1]
+                 for dim in range(array.ndim)][::-1]
         return shift
     else:
         center = array.shape[0] / 2.
@@ -437,7 +435,7 @@ def equalizearray(array):
     Equalize the array histogram
     """
     array = normalize(array)
-    array[array < 10e-10] = 0 # enough precision
+    array[array < 10e-10] = 0                    # enough precision
     if issubclass(array.dtype.type, complex):
         array = get_intensity(array)
     array = array.astype(float)
