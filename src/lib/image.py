@@ -15,8 +15,9 @@ from scipy.ndimage import geometric_transform
 from skimage.draw import line_aa
 from skimage.feature import canny
 
-from .minimize import generic_minimizer
 from . import cache
+from .interface import showimage
+from .minimize import generic_minimizer
 
 VERBOSE = 0
 tau = np.pi * 2  # twice as sexy as pi
@@ -27,26 +28,31 @@ tau = np.pi * 2  # twice as sexy as pi
 #    - imsave
 
 
-def correct_cmos_stripes(phase, position=0.5, denoise=5):
-    """
-    Al capturar hologramas con CMOS pueden aparecer franjas horizontales que
-    deforman la phase. Estas franjas pueden ser aisladas por su regularidad
-    horizotal.
+class Frame:
 
-    position: medida de posición no central, puede ser cualquier flotante entre 0 y 1:
-        1.0 es el máximo
-        0.5 (default) equivale la mediana, al segundo cuantil y al 50º percentil
-        0.0 es el mínimo
+    def __init__(self, side, pins=200):
+        """
+        It assumes center is in (radius, radius) (i.e.: the borders are
+        touching row 0 and column 0.
+        """
+        if type(side) is np.ndarray:
+            side = min(side.shape)
+        self.center = side // 2 - 1 + side % 2
+        self.radius = (side - 1) // 2
+        self.pins = pins
 
-    denoise: tamaño del filtro gausiano aplicado a los valores de las franjas
-    """
-    assert 0 <= position <= 1
-    values = np.sort(phase)
-    denoised = ndimage.filters.gaussian_filter(values, denoise)
-    rows, cols = phase.shape
-    col = cols * position
-    strip = denoised[:, col].reshape((rows, 1))
-    return phase - strip
+    def get_pin_pos(self, pin_number):
+        """
+        Since this coordinates are to be used as indexes they are always
+        rounded to ceil integer.
+        """
+        angle = (tau / self.pins) * (- pin_number) - np.pi
+        row = int(np.cos(angle) * self.radius) + self.center
+        col = int(np.sin(angle) * self.radius) + self.center
+        return row, col
+
+    def __getitem__(self, key):
+        return self.get_pin_pos(key)
 
 
 def choice_density_map(density_map, random=None):
@@ -481,3 +487,32 @@ def equalize(image):
         return ImageOps.equalize(image)
     else:
         return equalizearray(image)
+
+
+def example_clock(side=250, time=None):
+    """
+    Just kept here for coding documentation of how to efficintly use these
+    helper functions.
+
+    Time may be a tuple (hour, minute, second), if not current time is used.
+    """
+
+    if time is None:
+        from datetime import datetime
+        now = datetime.now()
+        hour, minute, second = now.hour, now.minute, now.second
+    else:
+        hour, minute, second = time
+
+    img = np.ones((side, side))
+    hours = Frame(img, pins=12)
+    minutes = Frame(img, pins=60)
+    seconds = Frame(img, pins=60)
+    center = ((side - 1) // 2, (side - 1) // 2)
+    img[center] = 0
+
+    draw_line(img, center, hours[hour],     value=0, opacity=1)
+    draw_line(img, center, minutes[minute], value=0, opacity=.5)
+    draw_line(img, center, seconds[second], value=0, opacity=.25)
+
+    showimage(img, f"Clock arrows pointing {hour}:{minute:02d}:{second:02d}")
