@@ -39,3 +39,8 @@ ipython: deps
 	cd $(SRC);\
 	DUMMY=True PYTHONPATH=deps $(PYTHON) terminal.py
 
+.PHONY: run
+run: deps
+	cd $(SRC);\
+	DUMMY=True PYTHONPATH=deps $(PYTHON) main.py
+
