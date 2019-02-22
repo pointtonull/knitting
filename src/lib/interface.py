@@ -58,6 +58,12 @@ def showimage(image, title=None):
             plot = plt.imshow(image)
         except TypeError:
             plot = plt.imshow(image.astype(float))
+        except ValueError:
+            if type(image) is tuple:
+                plot = plt.imshow(image[0])
+            else:
+                raise
+
         plot.set_cmap('gray')
         plot.axes.set_title(title)
         plot.axes.set_axis_off()
