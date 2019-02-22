@@ -100,3 +100,37 @@ class Test__lines():
         assert img.ptp() == 1
         img[2, 2] = 0
         assert img.ptp() == .5
+
+    def test__symetry(self):
+        """
+        Painting black on white should be equivalent opossite to
+        painting white on black.
+        """
+        img = np.ones((11, 11))
+        img[5, 5] = 0
+
+        draw_line(img,  (0,  0),  (10,  10), value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (5,  0),  (5,   10), value=.5, opacity=.5)
+        white = img
+
+        img = np.zeros((11, 11))
+        img[5, 5] = 1
+        draw_line(img,  (0,  0),  (10,  10), value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  10), (10,  0),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (0,  5),  (10,  5),  value=.5, opacity=.5)
+        draw_line(img,  (5,  0),  (5,   10), value=.5, opacity=.5)
+        black = img
+
+        complete = white + black
+        assert complete.mean() == approx(1)
+        assert complete.ptp() == approx(0)
