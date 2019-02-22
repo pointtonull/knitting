@@ -20,7 +20,7 @@ deps: .deps
 .PHONY: tdd
 tdd: deps
 	cd $(SRC);\
-	$(PYTHON) -m pytest -v --exitfirst --docttest-modules --pdb ../tests
+	$(PYTHON) -m pytest -v --exitfirst --pdb ../tests
 
 
 .PHONY: unit test
@@ -32,7 +32,7 @@ unit test: deps
 .PHONY: coverage
 coverage: deps
 	cd $(SRC);\
-	$(PYTHON) -m pytest -v --doctest-modules ./ --cov=./ --cov-report=term-missing ../tests
+	$(PYTHON) -m pytest -v ./ --cov=./ --cov-report=term-missing ../tests
 
 .PHONY: ipython
 ipython: deps
