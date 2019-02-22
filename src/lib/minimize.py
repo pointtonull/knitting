@@ -77,13 +77,13 @@ def get_fitted_paraboloid(data):
     return get_paraboloid(x, y, ax, bx, ay, by)
 
 
-def example():
+def example_lens():
     """
     Just a refresher on arrays manipulation and representation
     """
 
     from skimage.data import astronaut
-    from .interface import showimage
+    from .interface import imshow
 
     x, y = np.mgrid[:512, :512]
     eye = astronaut().mean(2) # value
@@ -94,9 +94,9 @@ def example():
     noisy %= tau
     fitted = get_fitted_paraboloid(noisy)
 
-    showimage(eye, "Original Image")
-    showimage(noisy, "With lens distorsion added")
-    showimage(fitted % tau, "Detected distorsion")
-    showimage((noisy - fitted) % tau, "Fixed image")
+    imshow(eye, "Original Image")
+    imshow(noisy, "With lens distorsion added")
+    imshow(fitted % tau, "Detected distorsion")
+    imshow((noisy - fitted) % tau, "Fixed image")
 
     return 0

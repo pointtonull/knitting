@@ -8,7 +8,7 @@ from PIL import Image as pil
 from PIL import ImageOps
 import numpy as np
 
-from numpy import sin, cos, exp, log, arctan2
+from numpy import sin, cos, exp, log, pi
 from scipy import misc, ndimage
 from scipy.misc import imresize
 from scipy.ndimage import geometric_transform
@@ -16,16 +16,11 @@ from skimage.draw import line_aa
 from skimage.feature import canny
 
 from . import cache
-from .interface import showimage
+from .interface import imshow
 from .minimize import generic_minimizer
 
 VERBOSE = 0
-tau = np.pi * 2  # twice as sexy as pi
-
-# TODO:
-#  * implement:
-#    - imshow   as in interface.py
-#    - imsave
+tau = pi * 2  # twice as sexy as pi
 
 
 class Frame:
@@ -46,45 +41,13 @@ class Frame:
         Since this coordinates are to be used as indexes they are always
         rounded to ceil integer.
         """
-        angle = (tau / self.pins) * (- pin_number) - np.pi
-        row = int(np.cos(angle) * self.radius) + self.center
-        col = int(np.sin(angle) * self.radius) + self.center
+        angle = (tau / self.pins) * (- pin_number) - pi
+        row = int(cos(angle) * self.radius) + self.center
+        col = int(sin(angle) * self.radius) + self.center
         return row, col
 
     def __getitem__(self, key):
         return self.get_pin_pos(key)
-
-
-def choice_density_map(density_map, random=None):
-    """
-    devuelve coordenadas aleatorias dentro de la forma de density_map donde se
-    considera a density_map como una función de densidad de probabilidad.
-
-    Si random es especificado este será el valor usado para los cálcules en
-    lugar de usar un número aleatorio.
-    """
-    cumsum = np.cumsum(density_map)
-    if random is None:
-        random = np.random.rand()
-    pos = np.searchsorted(cumsum, random * cumsum[-1])
-    row, col = np.unravel_index(pos, density_map.shape)
-    print("(%d, %d)" % (row, col))
-    return row, col
-
-
-def phase_denoise(phase, size=1, filter_func=ndimage.filters.median_filter):
-    """
-    Cuadratic denoise. Is a median filter applied on the angular space.
-    """
-    if size == 0:
-        return phase % tau
-    else:
-        y_over = sin(phase)
-        x_over = cos(phase)
-        y_over = filter_func(y_over, size)
-        x_over = filter_func(x_over, size)
-        denoised = arctan2(y_over, x_over)
-    return denoised
 
 
 def draw_line(canvas, start, end, value=0, opacity=.6):
@@ -312,33 +275,16 @@ def open_raw(filename):
         return array
 
     else:
-        raise IOError(f"unknown resolution on raw file {filename} ({lenght} pixels)")
+        raise IOError(f"unknown resolution on raw file {filename} "
+                      f"({lenght:d} pixels)")
 
 
 def imread(filename, flatten=True):
     if filename.endswith(".raw"):
         array = open_raw(filename)
     else:
-        try:
-            array = misc.imread(filename, flatten)
-        except IOError:
-            array = open_gdal(filename)
-            array = array[:3, :, :]                       # alpha shift
-            if flatten:
-                array = array.mean(0)
+        array = misc.imread(filename, flatten)
     return array
-
-
-def derotate(array):
-    rows, cols = array.shape
-    polar_array = get_logpolar(array, 0)
-    rows_sum = polar_array.sum(1)
-    maxcol = - rows_sum.argmax()
-    rows_sum = ndimage.shift(rows_sum, maxcol, order=0, mode="wrap")
-    rows_shift = maxcol
-    angle = (-360. * rows_shift) / rows
-    derotated = ndimage.rotate(array, angle, reshape=False)
-    return derotated
 
 
 def evenshape(array, shrink=False):
@@ -349,7 +295,6 @@ def evenshape(array, shrink=False):
     else:
         newshape = [dim - 1 + dim % 2 for dim in array.shape]
         newarray = array[:newshape[0], :newshape[1]]
-
     return newarray
 
 
@@ -365,7 +310,6 @@ def get_centered(array, center=None, mode='wrap', reverse=False):
 
     inverse False:  center -> current_center
     inverse True:   current_center -> center
-
     """
 
     if center:
@@ -515,4 +459,4 @@ def example_clock(side=250, time=None):
     draw_line(img, center, minutes[minute], value=0, opacity=.5)
     draw_line(img, center, seconds[second], value=0, opacity=.25)
 
-    showimage(img, f"Clock arrows pointing {hour}:{minute:02d}:{second:02d}")
+    imshow(img, f"Clock arrows pointing {hour}:{minute:02d}:{second:02d}")

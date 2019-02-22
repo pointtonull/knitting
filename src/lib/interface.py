@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#-*- coding: UTF-8 -*-
 
 
 from io import StringIO
@@ -11,7 +10,7 @@ NP = False
 try:
     import numpy as np
     NP = True
-except:
+except Exception:
     pass
 
 ndarray = not NP or np.ndarray
@@ -40,7 +39,7 @@ def fig2raster(figure):
     return figure
 
 
-def showimage(image, title=None):
+def imshow(image, title=None):
     image = fig2raster(image)
     if TKPIPE:
         raise NotImplementedError("Must print title!")
@@ -79,7 +78,7 @@ def color(message, color="blue"):
     return message
 
 
-blue = lambda message:color(message, "blue")
-red = lambda message:color(message, "red")
-green = lambda message:color(message, "green")
+blue = lambda message: color(message, "blue")    # noqa
+red = lambda message: color(message, "red")      # noqa
+green = lambda message: color(message, "green")  # noqa
 

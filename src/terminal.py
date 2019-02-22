@@ -11,7 +11,7 @@ def _main():
     from lib import image
     from lib import interface
     from lib import minimize
-    from lib.interface import showimage
+    from lib.interface import imshow
     import main
     import numpy as np
 
