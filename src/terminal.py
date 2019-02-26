@@ -8,12 +8,14 @@ def _main():
 
     noise = globals().keys() | locals().keys()
 
-    from lib import image
-    from lib import interface
-    from lib import minimize
-    from lib.interface import imshow
-    import main
     import numpy as np
+
+    from .lib import image
+    from .lib import interface
+    from .lib import minimize
+    from .lib.interface import imshow
+    from . import main
+
 
     libs = (globals().keys() | locals().keys()) - noise
     print(libs)
