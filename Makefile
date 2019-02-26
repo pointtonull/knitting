@@ -35,12 +35,15 @@ coverage: deps
 	$(PYTHON) -m pytest -v ./ --cov=./ --cov-report=term-missing ../tests
 
 .PHONY: ipython
-ipython: deps
-	cd $(SRC);\
-	DUMMY=True PYTHONPATH=deps $(PYTHON) terminal.py
+ipython:
+	echo 'Execute `iknitting` if "make dev_install" was sucesfull.'
+
+.PHONY: dev_install
+dev_install: deps
+	pip install -U --editable .
 
 .PHONY: run
-run: deps
-	cd $(SRC);\
-	DUMMY=True PYTHONPATH=deps $(PYTHON) main.py
+run:
+	echo 'Execute `knitting` if "make dev_install" was sucesfull.'
+
 
