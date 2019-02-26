@@ -62,6 +62,56 @@ class Frame:
             col = min(self.side - 1, col)
         return row, col
 
+    @lru_cache()
+    def get_segment_pixels(self, pin_from, pin_to, antiaaliasing=False):
+        """
+        Returns (rows, cols) covered by the segment.
+        """
+        if antiaaliasing:
+            raise NotImplementedError("Not sure if needed.")
+        r0, c0 = self[pin_from]
+        r1, c1 = self[pin_to]
+        return draw.line(r0, c0, r1, c1)
+
+    def get_mask(self):
+        """
+        Returns a mask selecting the interior covered by the circle.
+        """
+        shape = (self.side, self.side)
+        rows, cols = draw.circle(self.center, self.center, self.radius, shape)
+        return rows, cols
+
+    def segments(self):
+        """
+        Returts iterator over segments initial - final pin.
+        """
+        return itertools.combinations(range(self.pins), 2)
+
+    def render(self, weights, draw_pins=False, fast=False, blur_sigma=1,
+               opacity=0.1):
+        """
+        Creates a fast representation of the knitting.
+        """
+        if draw_pins:
+            raise NotImplementedError("Generic exception")
+
+        img_render = np.ones((self.side, self.side))
+        segments_weights = zip(self.segments(), weights)
+        length = (self.pins ** 2 - self.pins) // 2
+        with progressbar(segments_weights, length=length,
+                         label="Rendering") as items:
+            for (pin_from, pin_to), value in items:
+                draw_line(img_render, self[pin_from], self[pin_to], value=value,
+                          opacity=opacity, fast=fast)
+
+        if blur_sigma:
+            img_render = blur(img_render, blur_sigma)
+
+        return img_render
+
+    def __mul__(self, value):
+        return self.get_mask() * value
+
     def __getitem__(self, key):
         return self.get_pin_pos(key)
 
