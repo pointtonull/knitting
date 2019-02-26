@@ -18,7 +18,7 @@ def generic_minimizer(fitness_func, initial_guess, optimizers=None):
         # TODO: Create a dinamic fitter for best know solutions.
         optimizers = [
             optimize.fmin, # 66
-            optimize.fmin_powell,
+#             optimize.fmin_powell,
 #            optimize.leastsq,
         ]
 
