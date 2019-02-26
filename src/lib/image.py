@@ -371,7 +371,7 @@ def evenshape(array, shrink=False):
 
 
 def imwrite(array, filename):
-    return misc.imsave(filename, array)
+    return imsave(filename, array)
 
 
 def get_centered(array, center=None, mode='wrap', reverse=False):
@@ -482,8 +482,8 @@ def equalizearray(array):
     sorters = array.argsort()
     array.sort()
     zippeds = zip(array, sorters)
-    groups = groupby(zippeds, operator.itemgetter(0))
-    counter = count()
+    groups = itertools.groupby(zippeds, operator.itemgetter(0))
+    counter = itertools.count()
     for ovalue, group in groups:
         value = counter.next()
         for ovalue, pos in list(group):
