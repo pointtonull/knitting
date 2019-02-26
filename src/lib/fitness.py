@@ -28,13 +28,15 @@ Features:
     - Use Newton weights to prioritize thread finder
 """
 
+from . import image
 
-def naive(target, render):
+
+def naive(left, right):
     """
     Sum of difference between target and pilot.
     """
-    pass
-    return 0
+    img_diff = image.subtract(left, right) ** 2
+    return img_diff.sum()
 
 
 def visual(target, render):
@@ -43,5 +45,5 @@ def visual(target, render):
 
 
 def default(target, render):
-    return visual(target, render)
+    return naive(target, render)
 
