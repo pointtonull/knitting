@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+from functools import lru_cache
+import itertools
 import operator
-
-from itertools import groupby, count
+import random
 
 from PIL import Image as pil
 from PIL import ImageOps
@@ -10,17 +11,24 @@ import numpy as np
 
 from numpy import sin, cos, exp, log, pi
 from scipy import misc, ndimage
-from scipy.misc import imresize
-from scipy.ndimage import geometric_transform
-from skimage.draw import line_aa
+from scipy.misc import imresize, imsave
+from scipy.ndimage import geometric_transform, gaussian_filter
+from skimage import draw
 from skimage.feature import canny
 
 from . import cache
-from .interface import imshow
+from .interface import imshow, progressbar
 from .minimize import generic_minimizer
 
 VERBOSE = 0
 tau = pi * 2  # twice as sexy as pi
+
+
+def blur(image, sigma):
+    """
+    Just a wrapper around the choosen blur filter.
+    """
+    return gaussian_filter(image, sigma)
 
 
 class Frame:
