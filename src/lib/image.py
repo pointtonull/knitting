@@ -116,7 +116,7 @@ class Frame:
         return self.get_pin_pos(key)
 
 
-def draw_line(canvas, start, end, value=0, opacity=.6):
+def draw_line(canvas, start, end, value=0, opacity=.6, fast=False):
     """
     In place draws a line with anti-aliasing and given opacity.
 
@@ -125,11 +125,17 @@ def draw_line(canvas, start, end, value=0, opacity=.6):
     end: Final row and column.
     value: color to paint.
     opacity: how much to affect the image with the new values.
+    fast: it'll would execute a single operation, this ignores anti-alianing.
     """
-    rr, cc, alpha = line_aa(*start, *end)
-    original = canvas[rr, cc]
-    painted = value * alpha + original * (1 - alpha)
-    canvas[rr, cc] = painted * opacity + original * (1 - opacity)
+    if fast:
+        rr, cc = draw.line(*start, *end)
+        original = canvas[rr, cc]
+        canvas[rr, cc] = value * opacity + original * (1 - opacity)
+    else:
+        rr, cc, alpha = draw.line_aa(*start, *end)
+        original = canvas[rr, cc]
+        painted = value * alpha + original * (1 - alpha)
+        canvas[rr, cc] = painted * opacity + original * (1 - opacity)
 
 
 def auto_canny(array, average=None, gaussian_sigma=1, strongness=2.5,
