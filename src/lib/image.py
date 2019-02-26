@@ -40,11 +40,12 @@ class Frame:
         """
         if type(side) is np.ndarray:
             side = min(side.shape)
+        self.side = side
         self.center = side // 2 - 1 + side % 2
         self.radius = (side - 1) // 2
         self.pins = pins
 
-    def get_pin_pos(self, pin_number):
+    def get_pin_pos(self, pin_number, antimoire=7):
         """
         Since this coordinates are to be used as indexes they are always
         rounded to ceil integer.
@@ -52,6 +53,13 @@ class Frame:
         angle = (tau / self.pins) * (- pin_number) - pi
         row = int(cos(angle) * self.radius) + self.center
         col = int(sin(angle) * self.radius) + self.center
+        if antimoire:
+            row += random.randrange(antimoire) - (antimoire // 2)
+            row = max(0, row)
+            row = min(self.side - 1, row)
+            col += random.randrange(antimoire) - (antimoire // 2)
+            col = max(0, col)
+            col = min(self.side - 1, col)
         return row, col
 
     def __getitem__(self, key):
