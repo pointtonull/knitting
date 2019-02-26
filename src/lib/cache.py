@@ -258,11 +258,13 @@ class Cache:
 
 
     def flush(self):
-        if self.filename and self._ready and self._updated:
-            file = open(self.filename, "wb")
-            pickle.dump(self.cache, file, -1)
-            file.close()
-            self._updated = False
+        try:
+            if self.filename and self._ready and self._updated:
+                with open(self.filename, "wb") as file:
+                    pickle.dump(self.cache, file, -1)
+                self._updated = False
+        except:
+            pass
 
 
 
