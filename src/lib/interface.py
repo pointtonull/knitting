@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 
 
+from functools import partial
 from io import StringIO
 import os
 import sys
 
+import click
+import numpy as np
 
-NP = False
-try:
-    import numpy as np
-    NP = True
-except Exception:
-    pass
-
-ndarray = not NP or np.ndarray
-
+progressbar = partial(click.progressbar, label='Progress',
+                      bar_template='%(label)s  %(bar)s | %(info)s',
+                      fill_char=click.style(u'█', fg='cyan'), empty_char=' ',
+                      show_eta=True)
 
 if os.name in ("nt") or "TKPIPE" in os.environ:
     import tkpipe
@@ -43,7 +41,7 @@ def imshow(image, title=None):
     image = fig2raster(image)
     if TKPIPE:
         raise NotImplementedError("Must print title!")
-        if isinstance(image, ndarray):
+        if isinstance(image, np.ndarray):
             try:
                 image = pil.fromarray(image)
             except TypeError:
@@ -78,7 +76,20 @@ def color(message, color="blue"):
     return message
 
 
-blue = lambda message: color(message, "blue")    # noqa
-red = lambda message: color(message, "red")      # noqa
-green = lambda message: color(message, "green")  # noqa
+def example_progress(count):
+    """Demonstrates the progress bar."""
+    import time
+    import random
 
+    items = range(count)
+
+    def process_slowly(item):
+        time.sleep(0.002 * random.random())
+
+    with progressbar(items) as b_items:
+        for item in b_items:
+            process_slowly(item)
+
+    with progressbar(item for item in items) as b_items:
+        for item in b_items:
+            process_slowly(item)
