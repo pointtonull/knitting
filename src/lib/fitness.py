@@ -35,13 +35,13 @@ def naive(left, right):
     """
     Sum of difference between target and pilot.
     """
+    img_diff = (left - right) ** 2
+    return img_diff.mean()
+
+
+def visual(left, right):
     img_diff = image.subtract(left, right) ** 2
     return img_diff.sum()
-
-
-def visual(target, render):
-    pass
-    return 0
 
 
 def default(target, render):
