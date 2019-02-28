@@ -62,7 +62,6 @@ class Frame:
             col = min(self.side - 1, col)
         return row, col
 
-    @lru_cache()
     def get_segment_pixels(self, pin_from, pin_to, antiaaliasing=False):
         """
         Returns (rows, cols) covered by the segment.
@@ -87,8 +86,17 @@ class Frame:
         """
         return itertools.combinations(range(self.pins), 2)
 
-    def render(self, weights, draw_pins=False, fast=False, blur_sigma=1,
-               opacity=0.1):
+    @lru_cache(maxsize=None)
+    def render_segment(self, segment, value=0, opacity=.5, blur_sigma=1):
+        img_render = np.ones((self.side, self.side))
+        pin_from, pin_to = segment
+        draw_line(img_render, self[pin_from], self[pin_to],
+                  opacity=opacity, fast=False)
+        if blur_sigma:
+            img_render = blur(img_render, blur_sigma)
+        return img_render
+
+    def render_weights(self, weights, draw_pins=False, fast=False, blur_sigma=1):
         """
         Creates a fast representation of the knitting.
         """
