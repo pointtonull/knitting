@@ -45,7 +45,7 @@ class Frame:
         self.radius = (side - 1) // 2
         self.pins = pins
 
-    def get_pin_pos(self, pin_number, antimoire=7):
+    def get_pin_pos(self, pin_number, antimoire=3):
         """
         Since this coordinates are to be used as indexes they are always
         rounded to ceil integer.
