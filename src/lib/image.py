@@ -105,12 +105,34 @@ class Frame:
 
         img_render = np.ones((self.side, self.side))
         segments_weights = zip(self.segments(), weights)
-        length = (self.pins ** 2 - self.pins) // 2
-        with progressbar(segments_weights, length=length,
-                         label="Rendering") as items:
-            for (pin_from, pin_to), value in items:
-                draw_line(img_render, self[pin_from], self[pin_to], value=value,
-                          opacity=opacity, fast=fast)
+        for (pin_from, pin_to), opacity in segments_weights:
+            draw_line(img_render, self[pin_from], self[pin_to],
+                      opacity=opacity, fast=fast)
+
+        if blur_sigma:
+            img_render = blur(img_render, blur_sigma)
+
+        return img_render
+
+    def render_steps(self, steps, draw_pins=False, fast=False, blur_sigma=1,
+                     opacity=.5, img_render=None):
+        """
+        Creates a fast representation of the knitting.
+        """
+        if draw_pins:
+            raise NotImplementedError("Generic exception")
+
+        if img_render is None:
+            img_render = np.ones((self.side, self.side))
+
+        if len(steps) < 2:
+            raise ValueError("It is required at least to pins to create a "
+                             "segment.")
+
+        segments = zip(steps[:-1], steps[1:])
+        for pin_from, pin_to in segments:
+            draw_line(img_render, self[pin_from], self[pin_to],
+                      opacity=opacity, fast=fast)
 
         if blur_sigma:
             img_render = blur(img_render, blur_sigma)
