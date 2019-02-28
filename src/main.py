@@ -16,6 +16,20 @@ from .lib.interface import progressbar
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])  # should be default
 
 
+class Echo:
+
+    def __init__(self, every=10):
+        self.every = every
+        self.count = 0
+
+    def __call__(self, string):
+        if not (self.count % self.every):
+            click.echo("%s  (%d)" % (string, self.count))
+        self.count += 1
+
+echo_100 = Echo(every=100)
+echo_1000 = Echo(every=1000)
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
     """
