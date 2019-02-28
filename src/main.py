@@ -1,8 +1,10 @@
 import time
 import random
 import itertools
+from functools import reduce
+from operator import mul
 
-from scipy import optimize, stats
+from scipy import optimize
 import IPython
 import click
 import numpy as np
