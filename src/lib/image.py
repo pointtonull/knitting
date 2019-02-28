@@ -87,12 +87,12 @@ class Frame:
         """
         return itertools.combinations(range(self.pins), 2)
 
-    @lru_cache(maxsize=None)
-    def render_segment(self, segment, value=0, opacity=.5, blur_sigma=1):
+    def render_segment(self, segment, value=0, opacity=.5, blur_sigma=1,
+                       fast=True):
         img_render = np.ones((self.side, self.side))
         pin_from, pin_to = segment
         draw_line(img_render, self[pin_from], self[pin_to],
-                  opacity=opacity, fast=False)
+                  opacity=opacity, fast=fast)
         if blur_sigma:
             img_render = blur(img_render, blur_sigma)
         return img_render
