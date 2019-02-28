@@ -62,6 +62,7 @@ class Frame:
             col = min(self.side - 1, col)
         return row, col
 
+    @lru_cache(maxsize=None)
     def get_segment_pixels(self, pin_from, pin_to, antiaaliasing=False):
         """
         Returns (rows, cols) covered by the segment.
