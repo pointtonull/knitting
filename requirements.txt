@@ -1,4 +1,7 @@
-numpy
-scipy
-scikit-image
+Pillow
+click
 matplotlib
+numpy
+pytest
+scikit-image
+scipy

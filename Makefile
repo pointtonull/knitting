@@ -1,5 +1,6 @@
 SRC = src
-PYTHON = python
+PYTHON = python3
+REQUIREMENTS = requirements.txt
 
 
 .PHONY: clean
@@ -10,19 +11,16 @@ clean:
 
 
 deps: .deps
-.deps: $(REQUIREMENTS) requirements.txt
-	pip install -qUr requirements.txt
+
+.deps: $(REQUIREMENTS)
+	pip install -qUr $(REQUIREMENTS)
 	touch .deps
-
-
-ipython: deps
-	PYTHONPATH=$(SRC) $(PYTHON) -m IPython
 
 
 .PHONY: tdd
 tdd: deps
 	cd $(SRC);\
-	$(PYTHON) -m pytest -v --exitfirst --docttest-modules --pdb ../tests
+	$(PYTHON) -m pytest -v --exitfirst --pdb ../tests
 
 
 .PHONY: unit test
@@ -34,4 +32,18 @@ unit test: deps
 .PHONY: coverage
 coverage: deps
 	cd $(SRC);\
-	$(PYTHON) -m pytest -v --doctest-modules ./ --cov=./ --cov-report=term-missing ../tests
+	$(PYTHON) -m pytest -v ./ --cov=./ --cov-report=term-missing ../tests
+
+.PHONY: ipython
+ipython:
+	echo 'Execute `iknitting` if "make dev_install" was sucesfull.'
+
+.PHONY: dev_install
+dev_install: deps
+	pip install -U --editable .
+
+.PHONY: run
+run:
+	echo 'Execute `knitting` if "make dev_install" was sucesfull.'
+
+
